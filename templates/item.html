@@ -1,0 +1,81 @@
+<html>
+<head>
+    <title>
+        Order
+    </title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+</head>
+<body>
+
+<div></div>
+
+<p>{{ item.id }}</p>
+<p>{{ item.amazonorderid }}</p>
+<p><a onclick="call_counter('{{ item.asin }}');" href="#">{{ item.asin }}</a></p>
+<p>{{ item.orderitemid }}</p>
+<p>{{ item.sellersku }}</p>
+<p>{{ item.quantityshipped }}</p>
+<p>{{ item.itemprice }}</p>
+<script>
+
+
+
+function call_counter(pk) {
+    console.log(pk);
+
+    $.getJSON('../sp-api/catalog/get_item/'+pk, function (data, textStatus, jqXHR){
+        console.log(data.SalesRankings);
+        let sales_ranking = data.SalesRankings;
+
+        console.log(typeof(sales_ranking));
+        function myFunction(item, index, arr) {
+          console.log(arr[index].ProductCategoryId);
+          console.log(arr[index].Rank);
+        }
+        sales_ranking.forEach(myFunction)
+
+    $('div').text(data);
+    });
+
+    /*
+    $.get('../sp-api/catalog/get_item/'+pk, function (data) {
+        console.log(data)
+    });
+    */
+
+    /*
+
+
+    var jqxhr = $.get('../sp-api/catalog/get_item/'+pk, function(data) {
+      console.log(data)
+    })
+      .done(function() {
+        alert( "second success" );
+      })
+      .fail(function() {
+        alert( "error" );
+      })
+      .always(function() {
+        alert( "finished" );
+      });
+
+    // Perform other work here ...
+
+    // Set another completion function for the request above
+    jqxhr.always(function() {
+      alert( "second finished" );
+    });
+
+    */
+
+
+
+}
+
+
+
+</script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" crossorigin="anonymous"></script>
+</body>
+
+</html>

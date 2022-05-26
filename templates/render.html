@@ -1,0 +1,84 @@
+{% load tags %}
+{% csrf_token %}
+<!DOCTYPE html>
+<html>
+<head>
+<title>AboutUs</title>
+
+
+<script>
+function call_counter(pk) {
+    //window.open(url);
+    //$.get('../items/?page='+pk, function (data) {
+    $.get('../api/'+pk, function (data) {
+        console.log(data)
+        //alert(data);
+    });
+}
+
+function call_general_counter() {
+    $.get('../api/', function (data) {
+        console.log(data)
+        //alert(data);
+    });
+}
+</script>
+</head>
+<body>
+
+<button onclick="call_counter(1);">
+    ID 1
+</button>
+
+<button onclick="call_general_counter();">
+    ALL
+</button>
+<h2>Welcome To GFG {% get_current_time "%Y-%m-%d %I:%M %p" as the_time %}
+<p>The time is {{ the_time }}.</p></h2>
+<p>
+My First Name is {{ first_name }}.
+<br/>
+My Last Name is  {{ last_name }}.</p>
+
+{{ my_array|length }}
+
+<ul>
+  {% for number in my_array %}
+    <li>
+      {{ number }}
+    </li>
+  {% endfor %}
+</ul>
+
+
+
+{% block content %}
+   Calling a helper function ("penes", 1, 4) from template file
+    {% myfirst_method "penes" 1 4 as return_val %}
+    Return value is : {{ return_val }}
+{% endblock %}
+
+<p>{% any_function %} Persons in your model<p>
+
+<ul>
+  {% for option in my_person %}
+    <li>
+      {{ option.first_name }}
+    </li>
+  {% endfor %}
+</ul>
+
+<div>
+<h2 style="color:blue">List of even numbers from 10 to 20</h2>
+{% display_even_numbers 10 20 %}
+</div>
+
+{% for k, v in my_dict.items %}
+    <p>{{ k }} : {{ v }}</p>
+{% endfor %}
+
+<a href="../items/">items</a>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" crossorigin="anonymous"></script>
+
+</body>
+</html>
