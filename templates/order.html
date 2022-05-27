@@ -1,0 +1,130 @@
+<html>
+<head>
+    <title>
+        Order
+    </title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+</head>
+<body>
+
+<div class="container">
+
+    <div class="card" style="width: 500px;">
+        <img id="product_img" width="" height="" src="" alt="Card image cap">
+        <div class="card-header">
+        {{ item.amazonorderid }}
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">{{ item.sellersku }}</h5>
+            <p class="card-text">{{ item.asin }} <span id="rank"></span></p>
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">{{ item.quantityshipped }}</li>
+            <li class="list-group-item">{{ item.orderitemid }}</li>
+            <li class="list-group-item">{{ item.itemprice }}</li>
+        </ul>
+        <div class="card-body">
+            <a onclick="call_counter('{{ item.asin }}');" href="#" class="card-link">Get Catalog</a>
+        </div>
+    </div>
+
+</div>
+
+
+<script>
+
+function call_counter(pk) {
+    console.log(pk);
+
+    $.getJSON('../sp-api/catalog/get_item/'+pk, function (data, textStatus, jqXHR){
+        console.log(data.SalesRankings);
+        console.log(data.AttributeSets[0]);
+        console.log(typeof(data.AttributeSets));
+        console.log(data);
+        let sales_ranking = data.SalesRankings;
+
+        let attribute_sets = data.AttributeSets[0];
+
+        let brand = attribute_sets.Brand;
+
+        let small_image = attribute_sets.SmallImage;
+
+        let image_url = small_image.URL;
+
+        $("#product_img").attr("src", image_url);
+
+
+        let image_width_obj = small_image.Width;
+
+        let image_height_obj = small_image.Height;
+
+
+        const image_width = image_width_obj.value;
+        $("#product_img").attr("width", image_width+"px");
+        const image_width_units = image_width_obj.Units;
+
+
+        const image_height = image_height_obj.value;
+        $("#product_img").attr("height", image_height+"px");
+        const image_height_units = image_height_obj.Units;
+
+
+        console.log(typeof(sales_ranking));
+
+        let rank_str = "";
+
+        function myFunction(item, index, arr) {
+          console.log(arr[index].ProductCategoryId);
+          console.log(arr[index].Rank);
+
+          rank_str += " Category: " + arr[index].ProductCategoryId + " Rank: " + arr[index].Rank;
+        }
+        sales_ranking.forEach(myFunction)
+
+        console.log(rank_str);
+
+        $('#rank').text(rank_str);
+    });
+
+    /*
+    $.get('../sp-api/catalog/get_item/'+pk, function (data) {
+        console.log(data)
+    });
+    */
+
+    /*
+
+
+    var jqxhr = $.get('../sp-api/catalog/get_item/'+pk, function(data) {
+      console.log(data)
+    })
+      .done(function() {
+        alert( "second success" );
+      })
+      .fail(function() {
+        alert( "error" );
+      })
+      .always(function() {
+        alert( "finished" );
+      });
+
+    // Perform other work here ...
+
+    // Set another completion function for the request above
+    jqxhr.always(function() {
+      alert( "second finished" );
+    });
+
+    */
+
+
+
+}
+
+
+
+</script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" crossorigin="anonymous"></script>
+</body>
+
+</html>
