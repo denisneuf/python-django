@@ -13,8 +13,7 @@ class Person(models.Model):
 
 
 class OrdersUploads(models.Model):
-
-
+    id = models.BigIntegerField(db_column='id')
     amazonorderid = models.CharField(db_column='AmazonOrderId', max_length=19, primary_key=True)  # Field name made lowercase.
     asin = models.CharField(db_column='ASIN', max_length=10)  # Field name made lowercase.
     sellersku = models.CharField(db_column='SellerSKU', max_length=50)  # Field name made lowercase.

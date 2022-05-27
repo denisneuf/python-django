@@ -16,13 +16,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 # from app.views import TemplateView, RenderView, ItemsView, SingleItem, AllItems, ItemsUploadViews, SingleOrder, GetItem
-from app.views import TemplateView, OrdersView, OrderView, GetItem, UploadsView
+from app.views import TemplateView, OrdersView, OrderView, GetItem, UploadsView, UploadManual
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     # path('render/', RenderView.as_view()),
     path('', TemplateView.as_view()),
     path('orders/', OrdersView.as_view()),
+    path('core-api/upload/<str:amazon_order_id>/', UploadManual.as_view()),
     path('uploads/', UploadsView.as_view()),
     path('order/<str:order_id>', OrderView.as_view()),
     path('sp-api/catalog/get_item/<str:asin>/', GetItem.as_view()),

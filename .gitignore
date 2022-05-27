@@ -14,6 +14,7 @@ media
 # User-specific stuff
 
 djangoProject/settings.py
+app/migrations
 
 .idea/
 

@@ -5,12 +5,15 @@ from django.views.generic.list import ListView
 from datetime import datetime
 import json
 from django.http import JsonResponse
+from django.http import HttpResponse
 
 import logging
 from .models import Uploads
 from .models import Orders
 from .models import Person
 from .models import OrdersUploads
+
+import time
 
 logger = logging.getLogger(__name__)
 
@@ -25,6 +28,16 @@ class TemplateView(TemplateView):
     print(TemplateView);
     template_name = "index.html"  # your_template
 
+
+class UploadManual(View):
+
+    def get(self, request, amazon_order_id):
+        asin = request.GET.get('asin')
+        logger.warning(asin)
+        now = datetime.now()
+        msg = f'Today is {now} {amazon_order_id}'
+        time.sleep(2)
+        return HttpResponse(msg, content_type='text/plain')
 
 class GetItem(View):
 

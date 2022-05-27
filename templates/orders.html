@@ -1,7 +1,9 @@
 {% extends 'index.html' %}
-
+{% load static %}
 {% block title %}Orders{% endblock title %}
+{% block css %} <link rel="stylesheet" type="text/css" href="{% static 'css/orders.css' %}"/> {% endblock %}
 
+<section id="section">
 
 {% block content %}
 <table class="table mt-1">
@@ -26,9 +28,9 @@
         <td>{{ object.sellersku }}</td>
         <td>{{ object.purchasedate }}</td>
         <td>{{ object.itemprice }}</td>
-        <td>
+        <td id="upload-{{ object.id | safe }}">
             {% if object.file %}{{ object.file }}
-            {% else %} <a href="../order/{{ object.asin }}">{{ object.asin }}</a>
+            {% else %} <a onclick="upload_document('{{ object.amazonorderid | safe }}', '{{ object.asin | safe }}', '#upload-{{ object.id | safe }}');" href="#" class="card-link">{{ object.asin }}</a></a>
             {% endif %}
         </td>
     </tr>
@@ -38,26 +40,48 @@
 
 </table>
 
-<br>
+</section>
+<script>
+    //alert("pp");
+    function upload_document(order, asin, td) {
+
+        const preloader = '<div id="preloader" class="page-loader-wrapper"><div class="loader"><div class="loader-wheel"></div><div class="loader-text">POOOOOOOOO</div></div></div>'
+        $('body').append(preloader);
+        console.log(order, asin)
+        var jqxhr = $.get('../core-api/upload/' + order + "?asin=" + asin , function (data, status) {
+            //alert( "first success" );
+            console.log(data)
+            console.log(status)
+            }).done(function() {
+                //alert( "second success" );
+                $(td).text("penes");
+                $('#preloader').remove()
+            }).fail(function() {
+                //alert( "error" );
+            }).always(function() {
+                //alert( "finished" );
+            });
+
+        jqxhr.always(function() {
+            //alert( "second finished" );
+        });
+    }
+</script>
 
 
 <!--Pagination-->
 <nav aria-label="Page navigation example">
-    <ul class="pagination justify-content-center">
-    {% if page_obj.has_previous %}
-        <li class="page-item">
+    <ul class="pagination justify-content-center">{% if page_obj.has_previous %}<li class="page-item">
         <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
-      </li>
+    </li>
     {% else %}
         <li class="page-item disabled">
         <a class="page-link" href="#" tabindex="-1" aria-disabled="True">Previous</a>
       </li>
     {% endif %}
-
     {% if page_obj.number|add:'-4' > 1 %}
         <li class="page-item"><a class="page-link" href="?page={{ page_obj.number|add:'-5' }}">&hellip;</a></li>
     {% endif %}
-
     {% for i in page_obj.paginator.page_range %}
         {% if page_obj.number == i %}
             <li class="page-item active" aria-current="page">
@@ -70,11 +94,9 @@
              <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
         {% endif %}
     {% endfor %}
-
     {% if page_obj.paginator.num_pages > page_obj.number|add:'4' %}
        <li class="page-item"><a class="page-link" href="?page={{ page_obj.number|add:'5' }}">&hellip;</a></li>
     {% endif %}
-
     {% if page_obj.has_next %}
         <li class="page-item">
         <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
