@@ -1,40 +1,103 @@
-<html>
-<head>
-    <title>
-        Order
-    </title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-</head>
-<body>
+{% extends 'index.html' %}
+{% load static %}
+{% block title %}Item{% endblock title %}
+{% block css %} <link rel="stylesheet" type="text/css" href="{% static 'css/item.css' %}"/> {% endblock %}
+{% block js %} <script src="https://code.jquery.com/jquery-3.6.0.min.js" crossorigin="anonymous"></script> {% endblock %}
 
-<div class="container">
 
-    <div class="card" style="width: 500px;">
-        <img id="product_img" width="" height="" src="" alt="Card image cap">
-        <div class="card-header">
-        {{ item.amazonorderid }}
-        </div>
-        <div class="card-body">
-            <h5 class="card-title">{{ item.sellersku }}</h5>
-            <p class="card-text">{{ item.asin }} <span id="rank"></span></p>
-        </div>
-        <ul class="list-group list-group-flush">
-            <li class="list-group-item">{{ item.quantityshipped }}</li>
-            <li class="list-group-item">{{ item.orderitemid }}</li>
-            <li class="list-group-item">{{ item.itemprice }}</li>
-        </ul>
-        <div class="card-body">
-            <a onclick="call_counter('{{ item.asin }}');" href="#" class="card-link">Get Catalog</a>
+
+
+
+{% block content %}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">Home</a></li>
+    <li class="breadcrumb-item"><a href="/items/">Items</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{{ item.AmazonOrderId }}</li>
+  </ol>
+</nav>
+<!-- Button trigger modal -->
+    <!--
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+  Launch demo modal
+</button>
+-->
+
+<!-- Modal -->
+<div class="modal" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <img id="product_img" class = "thumbnail" width="" height="" src="" alt="Card image cap">
+                <br>
+                <span id="rank"></span>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
         </div>
     </div>
-
 </div>
 
+<section id="section">
+    <div class="container">
+        <div class="card" style="width: 500px;">
 
+            <div class="card-header">
+            {{ item.AmazonOrderId }}
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">{{ item.SellerSKU }}</h5>
+                <p class="card-text">{{ item.ASIN }}</p>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">{{ item.QuantityShipped }}</li>
+                <li class="list-group-item">{{ item.OrderItemId }}</li>
+                <li class="list-group-item">{{ item.ItemPrice }}</li>
+            </ul>
+            <div class="card-body">
+                <button type="button" class="btn btn-primary" onclick="call_get_item('{{ item.ASIN }}');" data-toggle="modal">Get Item</button>
+                <!--<button type="button" class="btn btn-primary" onclick="call_get_catalog_item('{{ item.ASIN }}');"data-toggle="modal" data-whatever="@fat">Open modal for @fat</button>-->
+
+                <!--<a data-dismiss="modal" onclick="call_counter('{{ item.ASIN }}');" href="#" class="card-link">Get Catalog</a>-->
+            </div>
+        </div>
+    </div>
+</section>
 <script>
 
-function call_counter(pk) {
+$('#exampleModal').on('show.bs.modal', function (event) {
+    $('#preloader').remove();
+  var button = $(event.relatedTarget) // Button that triggered the modal
+    console.log(button);
+  var recipient = button.data('whatever') // Extract info from data-* attributes
+  // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+  // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+  var modal = $(this)
+  modal.find('.modal-title').text('New message to ' + recipient)
+  modal.find('.modal-body input').val(recipient)
+})
+
+
+function call_get_catalog_item(pk) {
+    $.getJSON('../sp-api/catalog/get_catalog_item/'+pk, function (data, textStatus, jqXHR){
+ });
+}
+
+function call_get_item(pk) {
     console.log(pk);
+
+    const preloader = '<div id="preloader" class="page-loader-wrapper"><div class="loader"><div class="loader-wheel"></div><div class="loader-text">POOOOOOOOO</div></div></div>'
+    $('body').append(preloader);
+
 
     $.getJSON('../sp-api/catalog/get_item/'+pk, function (data, textStatus, jqXHR){
         console.log(data.SalesRankings);
@@ -77,54 +140,17 @@ function call_counter(pk) {
           console.log(arr[index].ProductCategoryId);
           console.log(arr[index].Rank);
 
-          rank_str += " Category: " + arr[index].ProductCategoryId + " Rank: " + arr[index].Rank;
+          rank_str += " Category: " + arr[index].ProductCategoryId + " Rank: " + arr[index].Rank + "<br>";
         }
         sales_ranking.forEach(myFunction)
 
         console.log(rank_str);
 
         $('#rank').text(rank_str);
+
+        $('#exampleModal').modal('show');
     });
-
-    /*
-    $.get('../sp-api/catalog/get_item/'+pk, function (data) {
-        console.log(data)
-    });
-    */
-
-    /*
-
-
-    var jqxhr = $.get('../sp-api/catalog/get_item/'+pk, function(data) {
-      console.log(data)
-    })
-      .done(function() {
-        alert( "second success" );
-      })
-      .fail(function() {
-        alert( "error" );
-      })
-      .always(function() {
-        alert( "finished" );
-      });
-
-    // Perform other work here ...
-
-    // Set another completion function for the request above
-    jqxhr.always(function() {
-      alert( "second finished" );
-    });
-
-    */
-
-
-
 }
-
-
-
 </script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js" crossorigin="anonymous"></script>
-</body>
 
-</html>
+{% endblock content %}

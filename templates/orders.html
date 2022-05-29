@@ -2,6 +2,7 @@
 {% load static %}
 {% block title %}Orders{% endblock title %}
 {% block css %} <link rel="stylesheet" type="text/css" href="{% static 'css/orders.css' %}"/> {% endblock %}
+{% block js %} <script src="https://code.jquery.com/jquery-3.6.0.min.js" crossorigin="anonymous"></script> {% endblock %}
 
 <section id="section">
 
@@ -11,11 +12,11 @@
     <tr>
         <th scope="col">#</th>
         <th scope="col">AmazonOrderId</th>
-        <th scope="col">ASIN</th>
-        <th scope="col">SellerSKU</th>
         <th scope="col">PurchaseDate</th>
-        <th scope="col">ItemPrice</th>
-        <th scope="col">File</th>
+        <th scope="col">LastUpdateDate</th>
+        <th scope="col">Status</th>
+        <th scope="col">OrderTotal</th>
+        <th scope="col">Actions</th>
     </tr>
   </thead>
   <tbody>
@@ -23,16 +24,17 @@
   {% for object in page_obj %}
     <tr>
         <th scope="row">{{ object.id }}</th>
-        <td><a href="../items/{{ object.amazonorderid }}">{{ object.amazonorderid }}</a></td>
-        <td>{{ object.asin }}</td>
-        <td>{{ object.sellersku }}</td>
-        <td>{{ object.purchasedate }}</td>
-        <td>{{ object.itemprice }}</td>
-        <td id="upload-{{ object.id | safe }}">
-            {% if object.file %}{{ object.file }}
-            {% else %} <a onclick="upload_document('{{ object.amazonorderid | safe }}', '{{ object.asin | safe }}', '#upload-{{ object.id | safe }}');" href="#" class="card-link">{{ object.asin }}</a></a>
+        <td>{{ object.AmazonOrderId }}</td>
+        <td>{{ object.PurchaseDate }}</td>
+        <td>{{ object.LastUpdateDate | date:"SHORT_DATETIME_FORMAT" }}</td>
+        <td>{{ object.OrderStatus }}</td>
+        <td>{{ object.OrderTotal }}</td>
+        <td id="confirm-{{ object.id }}">
+            {% if object.OrderStatus == "Pending" %}
+                <a title="Send Confirm Order Details" onclick="confirm_order_details('{{ object.AmazonOrderId | safe }}', '#confirm-{{ object.id }}');" href="#" class="card-link">⚠</a>
             {% endif %}
         </td>
+
     </tr>
   {% empty %}
 	<span>No objects yet.</span>
@@ -43,12 +45,20 @@
 </section>
 <script>
     //alert("pp");
-    function upload_document(order, asin, td) {
+    function confirm_order_details(order, td) {
 
-        const preloader = '<div id="preloader" class="page-loader-wrapper"><div class="loader"><div class="loader-wheel"></div><div class="loader-text">POOOOOOOOO</div></div></div>'
+        const preloader = '<div id="preloader" class="page-loader-wrapper">' +
+            '<div class="loader">' +
+            '<div class="loader-wheel"></div>' +
+            '<div class="loader-text">' +
+            '' +
+            '</div>' +
+            '</div>' +
+            '</div>'
         $('body').append(preloader);
-        console.log(order, asin)
-        var jqxhr = $.get('../core-api/upload/' + order + "?asin=" + asin , function (data, status) {
+        console.log(order, td)
+
+        var jqxhr = $.get('../sp-api/messaging/confirm-order-details/' + order, function (data, status) {
             //alert( "first success" );
             console.log(data)
             console.log(status)
@@ -66,9 +76,11 @@
         jqxhr.always(function() {
             //alert( "second finished" );
         });
+
+
+
     }
 </script>
-
 
 <!--Pagination-->
 <nav aria-label="Page navigation example">

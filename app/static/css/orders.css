@@ -15,7 +15,7 @@
 }
 
 .loader {
-  width: 60px;
+  width: 100%;
 }
 
 .loader-wheel {
@@ -43,10 +43,11 @@
 .loader-text {
   color: #404bb3;
   font-family: arial, sans-serif;
+  padding: 100px;
 }
 
 #section {
-  background-color: #9932cc;
+  background-color: #336699;
   border-bottom: 1px solid #000;
   -webkit-box-flex: 1;
   -ms-flex: 1;

@@ -2,12 +2,21 @@
 {% load static %}
 {% block title %}Get Orders{% endblock title %}
 {% block css %} <link rel="stylesheet" type="text/css" href="{% static 'css/orders.css' %}"/> {% endblock %}
+{% block js %} <script src="https://code.jquery.com/jquery-3.6.0.min.js" crossorigin="anonymous"></script> {% endblock %}
 
 
 {% block content %}
-<form action = "" method = "post">
+    <h1>Donwload Orders</h1>
+<form id = "target" action = "" method = "post">
     {% csrf_token %}
     {{form }}
-    <input type="submit" value=Submit">
+    <input type="submit" value="Submit">
 </form>
+
+<script>
+$( "#target" ).submit(function( event ) {
+  const preloader = '<div id="preloader" class="page-loader-wrapper"><div class="loader"><div class="loader-wheel"></div><div class="loader-text">Loading</div></div></div>'
+  $('body').append(preloader);
+});
+</script>
 {% endblock content %}

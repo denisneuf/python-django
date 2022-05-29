@@ -16,17 +16,25 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 # from app.views import TemplateView, RenderView, ItemsView, SingleItem, AllItems, ItemsUploadViews, SingleOrder, GetItem
-from app.views import TemplateView, OrdersView, OrderView, GetItem, UploadsView, UploadManual
+from app.views import TemplateView, ItemsView, ItemView, ItemDownloadView,\
+    GetItem, GetCatalogItem, UploadsView, UploadManual, OrderDownloadView, OrdersView,\
+    CreateConfirmOrderDetails
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     # path('render/', RenderView.as_view()),
     path('', TemplateView.as_view()),
+    path('items/', ItemsView.as_view()),
+    path('items/<str:order_id>', ItemView.as_view()),
     path('orders/', OrdersView.as_view()),
     path('core-api/upload/<str:amazon_order_id>/', UploadManual.as_view()),
+    path('sp-api/messaging/confirm-order-details/<str:amazon_order_id>/', CreateConfirmOrderDetails.as_view()),
+    path('orders/download/', OrderDownloadView.as_view()),
+    path('items/download/', ItemDownloadView.as_view()),
     path('uploads/', UploadsView.as_view()),
-    path('order/<str:order_id>', OrderView.as_view()),
+
     path('sp-api/catalog/get_item/<str:asin>/', GetItem.as_view()),
+    path('sp-api/catalog/get_catalog_item/<str:asin>/', GetCatalogItem.as_view()),
     # path('api/', AllItems.as_view()),
     # path('api/<int:person_id>/', SingleItem.as_view()),
     # path('uploads/', ItemsUploadViews.as_view()),
