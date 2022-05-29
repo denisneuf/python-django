@@ -15,6 +15,7 @@ media
 
 djangoProject/settings.py
 app/migrations
+app/static/manuals/
 
 .idea/
 

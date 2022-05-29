@@ -1,0 +1,15 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block title %}Get Orders{% endblock title %}
+{% block css %} <link rel="stylesheet" type="text/css" href="{% static 'css/orders.css' %}"/> {% endblock %}
+
+
+{% block content %}
+<form action = "" method = "post">
+    {% csrf_token %}
+    {{form }}
+    <input type="submit" value="Submit">
+</form>
+
+
+{% endblock content %}
